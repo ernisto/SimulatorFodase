@@ -1,0 +1,41 @@
+{
+  "name": "Game",
+  "tree": {
+    "$className": "DataModel",
+    
+    "ReplicatedStorage": {
+      "Packages": { "$path": "Packages" },
+      "Shared": { "$path": "src/shared" },
+      "Config": { "$path": "src/config" },
+      "Assets": {
+        "$className": "Folder",
+        "$ignoreUnknownInstances": true
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "$path": "src/client",
+        "$ignoreUnknownInstances": true
+      }
+    },
+    "ServerStorage": {
+      "Packages": { "$path": "ServerPackages" }
+    },
+    "ServerScriptService": {
+      "$path": "src/server",
+      "$ignoreUnknownInstances": true
+    },
+    
+    "Workspace": {
+      "$properties": {
+        "FilteringEnabled": true,
+        "SignalBehavior": "Immediate",
+        "TouchesUseCollisionGroups": true,
+        "IKControlConstraintSupport": "Enabled"
+      }
+    },
+    "SoundService": {
+      "$properties": { "RespectFilteringEnabled": true }
+    }
+  }
+}

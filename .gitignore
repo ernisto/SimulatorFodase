@@ -1,0 +1,9 @@
+# Lock Files
+/*.lock
+
+# Wally Packages
+/ServerPackages
+/Packages
+
+# Rojo Sourcemap
+/sourcemap.json

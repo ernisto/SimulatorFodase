@@ -1,0 +1,21 @@
+[package]
+name = "jove/lumber-simulation"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+ProfileService = "surnautica/profileservice@1.0.0"
+Promise = "lukadev-0/typed-promise@4.0.2"
+RandomOption = "ernisto/random-option@0.1.0"
+Replication = "ernisto/replication@0.1.2"
+Wrapper = "ernisto/wrapper@0.4.1"
+Signal = "ernisto/signal@0.1.1"
+Cache = "ernisto/cache@0.3.1"
+Ray = "ernisto/ray@0.1.2"
+
+[server-dependencies]
+Replicator = "ernisto/replicator@0.2.1"
+
+[place]
+shared-packages = "game.ReplicatedStorage.Packages"
