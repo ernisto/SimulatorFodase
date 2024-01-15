@@ -17,5 +17,8 @@ Ray = "ernisto/ray@0.1.2"
 [server-dependencies]
 Replicator = "ernisto/replicator@0.2.1"
 
+[dev-dependencies]
+TestEZ = "ruizukun-dev/testez@0.4.8"
+
 [place]
 shared-packages = "game.ReplicatedStorage.Packages"

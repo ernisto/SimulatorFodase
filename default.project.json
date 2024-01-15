@@ -20,6 +20,9 @@
       "$path": "src/server",
       "$ignoreUnknownInstances": true
     },
+    "TestService": {
+      "Packages": { "$path": "DevPackages" }
+    },
     
     "Workspace": {
       "$properties": {
