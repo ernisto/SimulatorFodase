@@ -21,7 +21,7 @@ local awaitData = PlayerProfile.subData('Market', {
 })
 
 --// Factory
-local Market = Entity.trait('Market', function(player: Player, self)
+local PlayerMarket = Entity.trait('PlayerMarket', function(player: Player, self)
     
     --// Instance
     self.gamepasses = {} :: { [number]: () -> () }
@@ -47,7 +47,7 @@ local function processReceipt(receipt)
     
     local player = Players:GetPlayerByUserId(receipt.PlayerId) or error(`player offline`)
     local profile = PlayerProfile.findProfile(player) or error(`inative profile`)
-    local playerMarket = Market.get(player)
+    local playerMarket = PlayerMarket.get(player)
     
     assert(isProcessing[receipt.PurchaseId], `already processing`)
     isProcessing[receipt.PurchaseId] = true
@@ -80,7 +80,7 @@ MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamep
     
     if not wasPurchased then return end
     
-    local market = Market.find(player)
+    local market = PlayerMarket.find(player)
     if not market then return end
     
     local callback = market.gamepasses[gamepassId]
@@ -88,4 +88,4 @@ MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamep
 end)
 
 --// End
-return Market
+return PlayerMarket
