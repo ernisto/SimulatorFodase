@@ -6,15 +6,10 @@
     "ReplicatedStorage": {
       "Packages": { "$path": "Packages" },
       "Shared": { "$path": "src/shared" },
+      "Client": { "$path": "src/client" },
       "Config": { "$path": "src/config" },
       "Assets": {
         "$className": "Folder",
-        "$ignoreUnknownInstances": true
-      }
-    },
-    "StarterPlayer": {
-      "StarterPlayerScripts": {
-        "$path": "src/client",
         "$ignoreUnknownInstances": true
       }
     },
@@ -24,6 +19,9 @@
     "ServerScriptService": {
       "$path": "src/server",
       "$ignoreUnknownInstances": true
+    },
+    "TestService": {
+      "Packages": { "$path": "DevPackages" }
     },
     
     "Workspace": {
