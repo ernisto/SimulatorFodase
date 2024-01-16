@@ -2,13 +2,8 @@
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local wrapper = require(ReplicatedStorage.Packages.Wrapper)
-
+local Entity = require(game.ReplicatedStorage.Packages.Entity)
 local PlayerProfile = require(script.Parent.Profile)
-
---// Module
-local Market = {}
 
 --// Types
 export type receipt = {
@@ -21,31 +16,19 @@ export type receipt = {
 }
 
 --// Data
-Market.baseData = {
+local awaitData = PlayerProfile.subData('Market', {
     receipts = {} :: {receipt}
-}
-local awaitMarketData = PlayerProfile.subData('Market', Market.baseData)
-export type data = typeof(Market.baseData)
-
---// Cache
-local onLoads = setmetatable({}, { __mode = 'k' })
-local cache = setmetatable({}, { __mode = 'k' })
-function Market.get(player: Player) return cache[player] or onLoads[player] and onLoads[player]:await() or Market.wrap(player) end
+})
 
 --// Factory
-function Market.wrap(player: Player)
-    
-    local container = Instance.new("Folder", player)
-    container.Name = "Market"
+local Market = Entity.trait('Market', function(player: Player, self)
     
     --// Instance
-    local self = wrapper(container, 'Market')
     self.gamepasses = {} :: { [number]: () -> () }
     self.products = {} :: { [number]: (receipt) -> () }
     
-    onLoads[player] = self:_signal('onLoad')
-    self.data = awaitMarketData(player)
-    self:_syncAttributes(self.data)
+    local data = awaitData(player)
+    self:_syncAttributes(data)
     
     --// Setters
     setmetatable(self.gamepasses, { __newindex = function(gamepasses, gamePassId, callback)
@@ -56,16 +39,7 @@ function Market.wrap(player: Player)
         end)
         rawset(gamepasses, gamePassId, callback)
     end })
-    
-    --// Gamepasses
-    self.isVip = false
-    self.gamepasses[675866684] = function() self.isVip = true end
-    
-    --// End
-    onLoads[player]:_emit(self)
-    cache[player] = self
-    return self
-end
+end)
 
 --// Functions
 local isProcessing = {}
@@ -106,7 +80,7 @@ MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamep
     
     if not wasPurchased then return end
     
-    local market = cache[player]
+    local market = Market.find(player)
     if not market then return end
     
     local callback = market.gamepasses[gamepassId]
