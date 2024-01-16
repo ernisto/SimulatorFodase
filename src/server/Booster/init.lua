@@ -15,7 +15,6 @@ local Booster = Entity.trait('Booster', function(container, self)
     function self:add(layer: string, boost: number, duration: number?)
         
         layers[layer] = self:get(layer) + boost
-        self[layer] = layers[layer]
         
         container.Value = self:get()
         if not duration then return end
@@ -25,15 +24,7 @@ local Booster = Entity.trait('Booster', function(container, self)
     end
     function self:remove(layer: string, boost: number?)
         
-        if not boost then
-            
-            layers[layer] = nil
-            self[layer] = nil
-        else
-            
-            layers[layer] = math.max(1.00, self:get(layer) + boost)
-            self[layer] = layers[layer]
-        end
+        layers[layer] = if boost then math.max(1.00, self:get(layer) + boost) else nil
         container.Value = self:get()
     end
     function self:get(layer: string?): number
