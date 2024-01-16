@@ -1,28 +1,14 @@
 --// Packages
-local RunService = game:GetService("RunService")
+local RunService = game:GetService('RunService')
+local Entity = require(game.ReplicatedStorage.Packages.Entity)
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local wrapper = require(ReplicatedStorage.Packages.Wrapper)
-
---// Module
-local Booster = {}
-
---// Vars
-local boosters = setmetatable({}, { __mode = 'k' })
-
---// Factory
-function Booster.new(name: string)
+--// Trait
+local Booster = Entity.trait('Booster', function(container, self)
     
-    local container = Instance.new("NumberValue")
-    container.Value = 1.00
-    container.Name = name
-    
-    --// Instance
-    local self = wrapper(container)
-    local lifetimes = {}
+    local layerLifetimes = {}
     local layers = {}
     
-    self.data = { layers = layers, lifetimes = lifetimes }
+    self.data = { layers = layers, lifetimes = layerLifetimes }
     self.lowestLifetime = 0
     
     --// Methods
@@ -34,8 +20,8 @@ function Booster.new(name: string)
         container.Value = self:get()
         if not duration then return end
         
-        if not lifetimes[layer] then lifetimes[layer] = {} end
-        table.insert(lifetimes[layer], { boost=boost, duration=duration })
+        if not layerLifetimes[layer] then layerLifetimes[layer] = {} end
+        table.insert(layerLifetimes[layer], { boost=boost, duration=duration })
     end
     function self:remove(layer: string, boost: number?)
         
@@ -61,23 +47,16 @@ function Booster.new(name: string)
     function self:reset()
         
         for layer in layers do self:remove(layer) end
-        table.clear(lifetimes)
+        table.clear(layerLifetimes)
     end
     
-    --// End
-    boosters[self] = lifetimes
-    return self
-end
-
---// Loop
-RunService.Heartbeat:Connect(function(deltaTime)
-    
-    for booster, layerLifetimes in boosters do
+    --// Loop
+    self:_host(RunService.Heartbeat:Connect(function(deltaTime)
         
         local allLifetimes = {}
         
         for layer, lifetimes in layerLifetimes do
-            
+                
             local index = 0
             repeat index += 1
                 
@@ -88,14 +67,24 @@ RunService.Heartbeat:Connect(function(deltaTime)
                 if lifetime.duration > 0 then table.insert(allLifetimes, lifetime.duration); continue end
                 
                 table.remove(lifetimes, index)
-                booster:remove(layer, lifetime.boost)
+                self:remove(layer, lifetime.boost)
                 index -= 1
                 
             until index >= #lifetimes
         end
-        booster.lowestLifetime = math.ceil(math.min(1/0, unpack(allLifetimes)))
-    end
+        self.lowestLifetime = math.ceil(math.min(1/0, unpack(allLifetimes)))
+    end))
 end)
+
+--// Factory
+function Booster.new(name: string)
+    
+    local container = Instance.new("NumberValue")
+    container.Value = 1.00
+    container.Name = name
+    
+    return Booster.get(container)
+end
 
 --// End
 return Booster
