@@ -1,10 +1,18 @@
 --// Packages
 local RunService = game:GetService('RunService')
-local Entity = require(game.ReplicatedStorage.Packages.Entity)
+local wrapper = require(game.ReplicatedStorage.Packages.Wrapper)
 
 --// Trait
-local Booster = Entity.trait('Booster', function(container, self)
+local Booster = {}
+
+--// Factory
+function Booster.new(name: string)
     
+    local container = Instance.new("NumberValue")
+    container.Value = 1.00
+    container.Name = name
+    
+    local self = wrapper(container)
     local layerLifetimes = {}
     local layers = {}
     
@@ -65,16 +73,9 @@ local Booster = Entity.trait('Booster', function(container, self)
         end
         self.lowestLifetime = math.ceil(math.min(1/0, unpack(allLifetimes)))
     end))
-end)
-
---// Factory
-function Booster.new(name: string)
     
-    local container = Instance.new("NumberValue")
-    container.Value = 1.00
-    container.Name = name
-    
-    return Booster.get(container)
+    --// End
+    return self
 end
 
 --// End
