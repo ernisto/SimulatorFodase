@@ -12,7 +12,7 @@ function Booster.new(name: string)
     container.Value = 1.00
     container.Name = name
     
-    local self = wrapper(container)
+    local self = wrapper(container, 'Booster')
     local layerLifetimes = {}
     local layers = {}
     
