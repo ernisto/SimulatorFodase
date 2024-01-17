@@ -11,7 +11,7 @@ Replication = "ernisto/replication@0.1.2"
 Wrapper = "ernisto/wrapper@0.4.2"
 Entity = "ernisto/entity@0.1.0"
 Signal = "ernisto/signal@0.1.1"
-Cache = "ernisto/cache@0.3.1"
+Cache = "ernisto/cache@0.4.0"
 Ray = "ernisto/ray@0.1.2"
 
 [server-dependencies]

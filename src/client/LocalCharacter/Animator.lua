@@ -14,7 +14,7 @@ return function(_humanoid: Humanoid?)
     local humanoid = _humanoid or localPlayer.Character and localPlayer.Character:FindFirstChildWhichIsA("Humanoid")
     if not humanoid then return end
     
-    return animators:findPromise(humanoid) or animators:promise(function(resolve)
+    return animators:findFirstPromise(humanoid) or animators:promise(function(resolve)
         
         local animator; repeat animator = humanoid:FindFirstChildWhichIsA("Animator")
         until animator or not humanoid.ChildAdded:Wait()
