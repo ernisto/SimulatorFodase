@@ -9,13 +9,13 @@ local haptic = require(ReplicatedStorage.Shared.EZHaptic)
 local Gameplay = {}
 
 --// Functions
-function Gameplay.error(message: string, intensity: number)
+function Gameplay.error(message: string, intensity: number?)
     
     notify(message, Color3.new(1, .3, .4))
     haptic{ device=UserInputService:GetLastInputType(), motor=Enum.VibrationMotor.Small, intensity=intensity }
     error(message)
 end
-function Gameplay.assert<value>(value: value, message: string, intensity: number): value
+function Gameplay.assert<value>(value: value, message: string, intensity: number?): value
     
     return value or Gameplay.error(message, intensity)
 end
