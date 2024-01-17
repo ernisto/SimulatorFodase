@@ -1,8 +1,8 @@
 --// Packages
 local Players = game:GetService("Players")
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ProfileService = require(ReplicatedStorage.Packages.ProfileService)
+local ServerStorage = game:GetService("ServerStorage")
+local ProfileService = require(ServerStorage.Packages.ProfileService)
 
 --// Module
 local PlayerProfile = {}
