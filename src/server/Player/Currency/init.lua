@@ -18,8 +18,9 @@ return Entity.trait('PlayerCurrency', function(self, player: Player)
     self.boost = self:_host(Booster.new('moneyBooster'))
     
     --// Methods
-    function self:add(amount: number)
+    function self:add(amount: number, ignoreBoost: 'ignore boost'?)
         
+        if not ignoreBoost then amount *= self.boost:get() end
         self.amount += amount
     end
     function self:consume(amount: number)
