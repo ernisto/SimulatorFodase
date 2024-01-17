@@ -24,7 +24,7 @@ local awaitRewardingData = PlayerProfile.subData('Rewarding', {
 })
 
 --// Trait
-return Entity.trait('Rewarding', function(player: Player, self)
+return Entity.trait('Rewarding', function(self, player: Player)
     
     --// Instance
     local data = awaitRewardingData(player)

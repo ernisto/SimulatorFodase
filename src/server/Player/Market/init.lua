@@ -21,7 +21,7 @@ local awaitData = PlayerProfile.subData('Market', {
 })
 
 --// Factory
-local PlayerMarket = Entity.trait('PlayerMarket', function(player: Player, self)
+local PlayerMarket = Entity.trait('PlayerMarket', function(self, player: Player, syncs: { receipts: {receipt} })
     
     --// Instance
     self.gamepasses = {} :: { [number]: () -> () }
