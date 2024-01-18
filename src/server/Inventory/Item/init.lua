@@ -43,6 +43,7 @@ function Item.new(data: data)
     self.roblox.Name = data.name
     self.modelAsset = asset.Model
     
+    self:_syncAttributes(asset:GetAttributes())
     self:_syncAttributes(config)
     self.config = config
     
