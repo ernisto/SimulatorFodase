@@ -32,6 +32,22 @@ function PlayerInventory.wrap(player)
         self:addItem(item)
     end
     
+    --// Listeners
+    self.itemRemoved:connect(function(item)
+        
+        local index = table.find(data.itemDatas, item.data)
+        if not index then return end
+        
+        table.remove(data.itemDatas, index)
+    end)
+    self.itemAdded:connect(function(item)
+        
+        local index = table.find(data.itemDatas, item.data)
+        if not index then return end
+        
+        table.insert(data.itemDatas, item.data)
+    end)
+    
     --// End
     cache:set(self, player)
     return self
