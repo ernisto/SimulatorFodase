@@ -9,5 +9,9 @@ return Entity.trait('Equipment', function(self, entity: Equipment.entity)
     local equipment = Equipment.Equipment.get(entity)
     local client = Replicator.get(entity)
     
-    function client.Equip(player) equipment:equip(player.Character.Humanoid) end
+    function client.Equip(player)
+        
+        if equipment.isEquipped then equipment:unequip()
+        else equipment:equip(player.Character.Humanoid) end
+    end
 end)
