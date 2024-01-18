@@ -1,6 +1,7 @@
 --// Packages
 local parseAttributes = require(game.ReplicatedStorage.Config.ParseAttributes)
 local wrapper = require(game.ReplicatedStorage.Packages.Wrapper)
+local joinMap = require(game.ReplicatedStorage.Shared.JoinMap)
 local Cache = require(game.ReplicatedStorage.Packages.Cache)
 
 local ItemAssets = game.ReplicatedStorage.Assets.Items
@@ -31,6 +32,8 @@ function Item.find(entity: entity): Item return cache:find(entity) end
 
 --// Component
 function Item.new(data: data)
+    
+    joinMap(baseData, data)
     
     local asset = ItemAssets[data.name]
     local config = parseAttributes(asset, baseConfig)
