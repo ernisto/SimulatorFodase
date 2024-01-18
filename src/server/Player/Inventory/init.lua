@@ -29,6 +29,8 @@ function PlayerInventory.wrap(player)
     --// Load
     for _,itemData in data.itemDatas do
         
+        if itemData.amount <= 0 then continue end
+        
         local item = Item.new(itemData)
         self:addItem(item)
     end
