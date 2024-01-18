@@ -63,7 +63,10 @@ function Item.new(data: data)
         assert(self.amount >= amount, `not enough amount`)
         self.amount -= amount
         
-        if self.amount == 0 then self:destroy() end
+        if self.amount > 0 then return end
+        
+        self.roblox.Parent = nil
+        self:destroy()
     end
     
     --// End
