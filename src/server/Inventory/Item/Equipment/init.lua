@@ -1,6 +1,6 @@
 --// Packages
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
-local Item = require(script.Parent.Item)
+local Item = require(script.Parent)
 
 --// Types
 export type entity = Item.entity

@@ -1,7 +1,8 @@
 --// Packages
 local parseAttributes = require(game.ReplicatedStorage.Config.ParseAttributes)
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
-local Item = require(script.Parent.Parent.Item)
+
+local Item = require(script.Parent.Parent)
 local Equipment = require(script.Parent)
 
 --// Config
@@ -39,7 +40,7 @@ Weared = Entity.trait('Weared', function(self, model: Equipment.entity)
     local targetPart = character:FindFirstChild(wear.targetName)
     
     --// Job
-    local visual = item.modelAsset:Clone()
+    local visual = item:visualize()
     local rootPart = visual.PrimaryPart
     rootPart.CFrame = equipped.handler.RootPart.CFrame * wear.offset
     visual.Parent = character
