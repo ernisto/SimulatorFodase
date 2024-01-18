@@ -55,6 +55,13 @@ function Item.new(data: data)
         
         return modelAsset:Clone()
     end
+    function self:consume(amount: number)
+        
+        assert(self.amount >= amount, `not enough amount`)
+        self.amount -= amount
+        
+        if self.amount == 0 then self:destroy() end
+    end
     
     --// End
     cache:set(self, self.roblox)
