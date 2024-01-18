@@ -21,6 +21,7 @@ function PlayerInventory.get(player: Player) return cache:find(player) or Player
 function PlayerInventory.wrap(player)
     
     local self = Inventory.get(player)
+    player:AddTag('PlayerInventory')
     
     local data = awaitData(player)
     self:_syncAttributes(data)
@@ -43,7 +44,7 @@ function PlayerInventory.wrap(player)
     self.itemAdded:connect(function(item)
         
         local index = table.find(data.itemDatas, item.data)
-        if not index then return end
+        if index then return end
         
         table.insert(data.itemDatas, item.data)
     end)
