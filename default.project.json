@@ -16,12 +16,25 @@
     "ServerStorage": {
       "Packages": { "$path": "ServerPackages" }
     },
-    "ServerScriptService": {
-      "$path": "src/server",
-      "$ignoreUnknownInstances": true
-    },
     "TestService": {
       "Packages": { "$path": "DevPackages" }
+    },
+    "ServerScriptService": {
+      "$path": "src/server",
+      "$ignoreUnknownInstances": true,
+      
+      "setup": {
+        "$className": "Script",
+        "$properties": { "Source": "--// Packages\nlocal Entity = require(game.ReplicatedStorage.Packages.Entity)\n\n--// Setup\nEntity.query{ root = script.Parent, class=\"ModuleScript\" }:track(require)" }
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "setup": {
+          "$className": "LocalScript",
+          "$properties": { "Source": "--// Packages\nlocal Entity = require(game.ReplicatedStorage.Packages.Entity)\n\n--// Setup\nEntity.query{ root = game.ReplicatedStorage.Client, class=\"ModuleScript\" }:track(require)" }
+        }
+      }
     },
     
     "Workspace": {
