@@ -12,7 +12,7 @@ export type entity = Folder
 --// Data
 local baseData = {
     name = 'invalid',
-    amount = 0,
+    amount = 1,
 }
 export type data = typeof(baseData)
 
