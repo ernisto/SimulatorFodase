@@ -34,6 +34,7 @@ function Item.new(data: data)
     
     local asset = ItemAssets[data.name]
     local config = parseAttributes(asset, baseConfig)
+    local modelAsset = asset.Model
     
     local tags = asset:GetTags()
     table.remove(tags, table.find(tags, 'asset'))
@@ -41,7 +42,6 @@ function Item.new(data: data)
     --// Instance
     local self = wrapper(Instance.new("Folder"), 'Item', unpack(tags))
     self.roblox.Name = data.name
-    self.modelAsset = asset.Model
     
     self:_syncAttributes(asset:GetAttributes())
     self:_syncAttributes(config)
@@ -53,14 +53,17 @@ function Item.new(data: data)
     --// Methods
     function self:visualize()
         
-        return self.modelAsset:Clone()
+        return modelAsset:Clone()
     end
     
     --// End
     cache:set(self, self.roblox)
     return self
 end
-export type Item = wrapper.wrapper<entity> & data & config
+export type Item = wrapper.wrapper<entity>
+    & config & { config: config }
+    & data & { data: data }
+    & { visualize: (any) -> Model }
 
 --// End
 return Item
