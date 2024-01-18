@@ -49,6 +49,12 @@ function Item.new(data: data)
     self:_syncAttributes(data)
     self.data = data
     
+    --// Methods
+    function self:visualize()
+        
+        return self.modelAsset:Clone()
+    end
+    
     --// End
     cache:set(self, self.roblox)
     return self
