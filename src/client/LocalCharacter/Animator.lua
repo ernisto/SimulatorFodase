@@ -24,7 +24,10 @@ return function(_humanoid: Humanoid?)
         local tracks = Cache.new(-1)
         
         --// Methods
-        function self:getTrack(animation: Animation): AnimationTrack
+        function self:getTrack(input: Animation|Folder): AnimationTrack
+            
+            local animation = if input:IsA('Animation') then input else
+                input:GetChildren()[math.random(1, #input:GetChildren())] :: Animation
             
             return tracks:find(animation.AnimationId)
             or tracks:set(animator:LoadAnimation(animation),
