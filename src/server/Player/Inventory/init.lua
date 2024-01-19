@@ -14,11 +14,19 @@ local awaitData = PlayerProfile.subData('Inventory', {
 --// Handler
 local PlayerInventory = {}
 
-local cache = Cache.new(-1, 'k')
-function PlayerInventory.get(player: Player) return cache:find(player) or PlayerInventory.wrap(player) end
+local cache = Cache.async(-1, 'k')
+function PlayerInventory.get(player: Player)
+    
+    return if cache:findFirstPromise(player)
+        then cache:findFirstPromise(player):expect()
+        else PlayerInventory.wrap(player)
+end
 
 --// Adapter
-function PlayerInventory.wrap(player)
+function PlayerInventory.wrap(player: Player)
+    
+    local resolve
+    cache:promise(function(_resolve) resolve = _resolve; coroutine.yield() end, player)
     
     local self = Inventory.get(player)
     player:AddTag('PlayerInventory')
@@ -52,7 +60,7 @@ function PlayerInventory.wrap(player)
     end)
     
     --// End
-    cache:set(self, player)
+    resolve(self)
     return self
 end
 
