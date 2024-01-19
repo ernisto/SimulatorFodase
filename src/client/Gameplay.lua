@@ -11,6 +11,8 @@ local Gameplay = {}
 --// Functions
 function Gameplay.error(message: string, intensity: number?)
     
+    message = tostring(message)
+    
     notify(message, Color3.new(1, .3, .4))
     haptic{ device=UserInputService:GetLastInputType(), motor=Enum.VibrationMotor.Small, intensity=intensity }
     error(message)
