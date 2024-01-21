@@ -2,23 +2,24 @@
 local Replicator = require(game.ServerStorage.Packages.Replicator)
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 
-local PlayerPower = require(script.Parent)
-local PowerMarket = require(script.Parent.market)
+local FarmingMarket = require(script.Parent.market)
+local PlayerFarming = require(script.Parent)
 
 --// Trait
-return Entity.trait('PlayerPower', function(self, player: Player)
+return Entity.trait('PlayerFarming', function(self, player: Player)
     
-    local power = PlayerPower.get(player)
-    local market = PowerMarket.get(player)
+    local farming = PlayerFarming.get(player)
+    local market = FarmingMarket.get(player)
     local client = Replicator.get(self.roblox)
     
     function client.Click(player)
         
-        power:add(1)
+        farming:consumeCooldown()
+        farming:click()
     end
     function client.AutoClick(player, isToggled: boolean)
         
         market.FastAutoClick:expect()
-        power:toggleAutoclick(isToggled)
+        farming:toggleAutoclick(isToggled)
     end
 end)
