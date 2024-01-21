@@ -20,7 +20,7 @@ local baseConfig = {
 export type config = typeof(baseConfig)
 
 --// Trait
-return Entity.trait('Mergeble', function(self, model: entity, syncs: data & config)
+local Mergeble; Mergeble = Entity.trait('Mergeble', function(self, model: entity, syncs: data & config)
     
     local item = Item.find(model) or error(`this isnt a item`)
     
@@ -36,4 +36,8 @@ return Entity.trait('Mergeble', function(self, model: entity, syncs: data & conf
         assert(self.level ~= self.maxLevel)
         self.level += 1
     end
+    
+    --// Clauses
+    item:addStackClause(function(hoster) return self.level == Mergeble.get(hoster.roblox).level end)
 end)
+return Mergeble

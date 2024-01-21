@@ -1,4 +1,5 @@
 --// Packages
+local HttpService = game:GetService('HttpService')
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 
 local Item = require(script.Item)
@@ -20,7 +21,20 @@ return Entity.trait('Inventory', function(self, entity: Instance)
     end
     function self:addItem(item: Item)
         
-        self:_host(item)
+        for storedItem in self.items do
+            
+            if not storedItem:canStack(item) then continue end
+            
+            local stacking = math.min(item.amount, storedItem.maxAmount - storedItem.amount)
+            if stacking <= 0 then continue end
+            
+            storedItem.amount += stacking
+            item.amount -= stacking
+            
+            if item.amount <= 0 then item:destroy(); return end
+        end
+        
+        item.roblox.Parent = self.roblox
     end
     
     --// Listeners

@@ -54,6 +54,19 @@ function Item.new(data: data)
     self.data = data
     
     --// Methods
+    local clauses = {
+        [function(hoster) return self.name == hoster.name end] = true
+    }
+    function self:addStackClause(clause: (hoster: Item) -> boolean)
+        
+        clauses[clause] = true
+    end
+    function self:canStack(hoster)
+        
+        for clause in clauses do if not clause(hoster) then return false end end
+        return true
+    end
+    
     function self:visualize()
         
         return modelAsset:Clone()
@@ -71,6 +84,10 @@ function Item.new(data: data)
     
     --// End
     cache:set(self, self.roblox)
+    
+    self.roblox.Parent = game.ServerStorage -- trigger CollectionService InstaceAdded
+    for _,tag in tags do if tag ~= 'Item' then self.roblox:WaitForChild(tag) end end
+    
     return self
 end
 export type Item = wrapper.wrapper<entity>
