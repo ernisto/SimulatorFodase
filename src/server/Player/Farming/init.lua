@@ -4,6 +4,7 @@ local Entity = require(game.ReplicatedStorage.Packages.Entity)
 --// Trait
 return Entity.trait('PlayerFarming', function(self, player: Player)
     
+    self.isAutoclickToggled = false
     self.cooldown = 4/4
     
     --// Signals
@@ -26,16 +27,20 @@ return Entity.trait('PlayerFarming', function(self, player: Player)
     local autoclick: thread?
     function self:toggleAutoclick(isToggled: boolean)
         
+        self.isAutoclickToggled = isToggled
+        
         if autoclick then autoclick = task.cancel(autoclick) end
         if not isToggled then return end
         
         local quotient = 0
         autoclick = self:_host(task.spawn(function()
             
-            quotient += task.wait(self.cooldown - quotient)
-            for _ = 1, quotient // self.cooldown do self:click() end
-            
-            quotient %= self.cooldown
+            repeat
+                quotient += task.wait(self.cooldown - quotient)
+                for _ = 1, quotient // self.cooldown do self:click() end
+                
+                quotient %= self.cooldown
+            until false
         end))
     end
 end)
