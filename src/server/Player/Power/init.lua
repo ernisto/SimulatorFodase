@@ -16,7 +16,6 @@ return Entity.trait('PlayerPower', function(self, player: Player, syncs: { baseP
     self:_syncAttributes(data)
     
     self.boost = self:_host(Booster.new('powerBooster'))
-    self.cooldown = 4/4
     self.bonus = 0
     
     --// Methods
@@ -32,17 +31,5 @@ return Entity.trait('PlayerPower', function(self, player: Player, syncs: { baseP
             amount += self.bonus
         end
         self.basePower += amount
-    end
-    
-    local autoclick: thread?
-    function self:toggleAutoclick(isToggled: boolean)
-        
-        if autoclick then autoclick = task.cancel(autoclick) end
-        if not isToggled then return end
-        
-        autoclick = self:_host(task.spawn(function()
-            
-            repeat self:add(task.wait(self.cooldown)) until false
-        end))
     end
 end)
