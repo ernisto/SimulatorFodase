@@ -37,6 +37,7 @@ return Entity.trait('Mob', function(self, model: entity)
     self.Proximity = Entity.query{ root=model, class='ProximityPrompt' }:await()
     self.maxHealth = model:GetAttribute('maxHealth')
     self.health = self.maxHealth
+    self.isFocused = false
     
     self.unfocused = self:_signal('unfocused')
     self.focused = self:_signal('focused')
@@ -72,10 +73,12 @@ return Entity.trait('Mob', function(self, model: entity)
     
     function self:unfocus()
         
+        self.isFocused = false
         self.unfocused:_emit()
     end
     function self:focus()
         
+        self.isFocused = true
         self.focused:_emit()
     end
     
