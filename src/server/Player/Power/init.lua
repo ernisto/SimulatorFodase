@@ -1,7 +1,9 @@
 --// Packages
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 local Booster = require(game.ServerScriptService.Booster)
+
 local PlayerProfile = require(script.Parent.Profile)
+local PlayerFarming = require(script.Parent.Farming)
 
 --// Data
 local awaitData = PlayerProfile.subData('Power', {
@@ -10,6 +12,8 @@ local awaitData = PlayerProfile.subData('Power', {
 
 --// Trait
 return Entity.trait('PlayerPower', function(self, player: Player, syncs: { basePower: number })
+    
+    local farming = PlayerFarming.get(player)
     
     --// Data
     local data = awaitData(player)
@@ -32,4 +36,7 @@ return Entity.trait('PlayerPower', function(self, player: Player, syncs: { baseP
         end
         self.basePower += amount
     end
+    
+    --// Listeners
+    farming.clicked:connect(function() self:add(1) end)
 end)
