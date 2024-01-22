@@ -40,7 +40,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         if productId then PlayerMarket.get(player):getProduct(productId):expect() end
         
         local items = {}
-        for count = 1, 3 do items[count] = self:summon(player, summoning).roblox end
+        for count = 1, 3 do items[count] = self:summon(player, summoning) end
         
         return unpack(items)
     end
