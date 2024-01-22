@@ -24,6 +24,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local petConfig = game.ReplicatedStorage.Assets.Items[name]
         
         local petFrame = board.Holder.Pets.PetFrame:Clone()
+        local viewport = petFrame.Viewport
         petFrame.Parent = board.Holder.Pets
         petFrame.chance.Text = string.format(`%.2f%%`, 100*rate/totalRate)
         petFrame.Visible = true
@@ -31,15 +32,16 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         table.insert(petFrames, petFrame)
         petFrame.LayoutOrder = 100000/rate
         
-        local camera = petFrame:FindFirstChildOfClass('Camera') or Instance.new('Camera', petFrame)
-        petFrame.CurrentCamera = camera
+        local camera = viewport:FindFirstChildOfClass('Camera') or Instance.new('Camera', viewport)
+        viewport.CurrentCamera = camera
         
         local itemModel = petConfig.Model:Clone() :: Model
         if not itemModel.PrimaryPart then continue end
         
-        itemModel.Parent = petFrame
+        itemModel.Parent = viewport
         camera.CFrame = itemModel.PrimaryPart.CFrame
-            * CFrame.new(0, 0, -10)
+            * CFrame.fromEulerAnglesYXZ(-.5, math.pi + .5, 0)
+            * CFrame.new(0, 0, 5)
     end
     
     table.sort(petFrames, function(frame1, frame2) return frame1.LayoutOrder > frame2.LayoutOrder end)
