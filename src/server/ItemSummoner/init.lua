@@ -63,6 +63,6 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local item = Item.new{ name=itemName }
         
         inventory:addItem(item)
-        return item.roblox
+        return itemName
     end
 end)
