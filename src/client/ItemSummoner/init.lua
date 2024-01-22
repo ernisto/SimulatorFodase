@@ -99,38 +99,45 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         self.animationSkipped:_emit()
     end)
     
+    --// Auto Summon
     if not summonAutoPrompt then return end
-    skipPrompt.UIOffset = Vector2.new(110, -200)
+    local autoSummon
     
     local stopPrompt = model.PrimaryPart.Stop
-    local autoSummon
+    local function hideStop()
+        
+        skipPrompt.UIOffset = Vector2.new(0, -200)
+        stopPrompt.Enabled = false
+        hideSkip()
+    end
     
     stopPrompt.Triggered:Connect(function()
         
         if not autoSummon then return end
         
         task.cancel(autoSummon)
-        stopPrompt.Enabled = false
-        hideSkip()
+        hideStop()
     end)
     summonAutoPrompt.Triggered:Connect(function()
         
         if autoSummon then return end
         
+        skipPrompt.UIOffset = Vector2.new(110, -200)
         stopPrompt.Enabled = true
-        autoSummon = task.spawn(function() while true do
-            
-            local item = server:invokeSummon1Async()
-                :catch(function(err) Gameplay.error(err.error:gsub("[%w%. ]*:%d+: ", " ")) end)
-                :expect()
-            
-            showSkip()
-            
-            task.spawn(function() self.itemSummoned:_emit(item) end)
-            Promise.all{ Promise.delay(LocalSummon.cooldown), Promise.fromEvent(skipPrompt.Triggered):timeout(5) }:await()
-        end
-            stopPrompt.Enabled = false
-            hideSkip()
+        
+        autoSummon = task.spawn(function()
+            while true do
+                
+                local item = server:invokeSummon1Async()
+                    :catch(function(err) Gameplay.error(err.error:gsub("[%w%. ]*:%d+: ", " ")) end)
+                    :expect()
+                
+                showSkip()
+                
+                task.spawn(function() self.itemSummoned:_emit(item) end)
+                Promise.all{ Promise.delay(LocalSummon.cooldown), Promise.fromEvent(skipPrompt.Triggered):timeout(5) }:await()
+            end
+            hideStop()
         end)
     end)
 end)
