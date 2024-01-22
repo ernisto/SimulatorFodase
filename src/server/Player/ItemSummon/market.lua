@@ -10,15 +10,15 @@ return Entity.trait('PlayerItemSummon', function(self, player)
     local playerItemSummon = PlayerItemSummon.get(player)
     local market = PlayerMarket.get(player)
     
-    self.LuckyPass = market:getPass(690116553)
-    self.SuperLuckyPass = market:getPass(689961949)
-    self.MegaLuckyPass = market:getPass(689942914)
+    self.LuckyPass = self:_host(market:getPass(690116553))
+    self.SuperLuckyPass = self:_host(market:getPass(689961949))
+    self.MegaLuckyPass = self:_host(market:getPass(689942914))
     
-    self.SkipSummonPass = market:getPass(689889889)
-    self.MultiSummonPass = market:getPass(689892916)
+    self.SkipSummonPass = self:_host(market:getPass(689889889))
+    self.MultiSummonPass = self:_host(market:getPass(689892916))
     
     --// Binders
-    self.SkipSummonPass:bind(function() playerItemSummon.cooldown = 0 end)
+    self.SkipSummonPass:bind(function() print('can skip'); playerItemSummon.cooldown = 0 end)
     
     self.LuckyPass:bind(function() playerItemSummon.luckBoost:add('pass', 1/6) end)
     self.SuperLuckyPass:bind(function() playerItemSummon.luckBoost:add('pass', 2/6) end)

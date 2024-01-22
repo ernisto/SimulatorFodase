@@ -23,6 +23,7 @@ function Pass.new(player: Player, gamepassId: number)
     self.id = gamepassId
     
     --// Pass Owning
+    self.purchased = self:_signal('purchased')
     self.isOwned = table.find(gamepasses, gamepassId) or false
     Promise.retry(function() if gamepasses[gamepassId] or MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId) then self.isOwned = true end end, -1)
     
@@ -46,12 +47,14 @@ function Pass.new(player: Player, gamepassId: number)
     function self:bind(binder: () -> ())
         
         if self.isOwned then binder() end
-        self:listenChange('ísOwned'):connect(binder)
+        self.purchased:connect(binder)
     end
     function self:give()
         
         gamepasses[gamepassId] = os.time()
+        
         self.isOwned = true
+        self.purchased:_emit()
     end
     function self:prompt()
         
@@ -70,7 +73,7 @@ MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, gamep
     if not wasPurchased then return end
     
     local pass = passes:find(player, gamepassId)
-    if pass then pass.isOwned = true end
+    if pass then pass:give() end
 end)
 
 --// End

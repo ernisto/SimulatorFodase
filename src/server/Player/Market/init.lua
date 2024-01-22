@@ -1,6 +1,5 @@
 --// Packages
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
-local PlayerProfile = require(script.Parent.Profile)
 
 local Product = require(script.Product)
 type Product = Product.Product
@@ -8,18 +7,10 @@ type Product = Product.Product
 local Pass = require(script.Pass)
 type Pass = Pass.Pass
 
---// Data
-local awaitData = PlayerProfile.subData('Market', {
-    receipts = {} :: {receipt}
-})
-
---// Factory
-local PlayerMarket = Entity.trait('PlayerMarket', function(self, player: Player, syncs: { receipts: {receipt} })
+--// Trait
+return Entity.trait('PlayerMarket', function(self, player: Player)
     
     --// Instance
-    local data = awaitData(player)
-    self:_syncAttributes(data)
-    
     self.products = {} :: { [number]: Product }
     self.passes = {} :: { [number]: Pass }
     
@@ -41,6 +32,3 @@ local PlayerMarket = Entity.trait('PlayerMarket', function(self, player: Player,
         return self.passes[passId]
     end
 end)
-
---// End
-return PlayerMarket
