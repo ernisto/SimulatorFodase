@@ -1,5 +1,4 @@
 --// Packages
-local HttpService = game:GetService('HttpService')
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 
 local Item = require(script.Item)
@@ -25,7 +24,7 @@ return Entity.trait('Inventory', function(self, entity: Instance)
             
             if not storedItem:canStack(item) then continue end
             
-            local stacking = math.min(item.amount, storedItem.maxAmount - storedItem.amount)
+            local stacking = if storedItem.maxAmount > 0 then math.min(item.amount, storedItem.maxAmount - storedItem.amount) else item.amount
             if stacking <= 0 then continue end
             
             storedItem.amount += stacking

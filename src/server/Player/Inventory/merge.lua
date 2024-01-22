@@ -8,15 +8,6 @@ type Item = Item.Item
 
 local PlayerInventory = require(script.Parent)
 
-Entity.query{ tag='ItemGiver' }:track(function(prompt)
-    
-    prompt.Triggered:Connect(function(player)
-        
-        local item = Item.new{ name='Cavalo' }
-        PlayerInventory.get(player):addItem(item)
-    end)
-end)
-
 --// Trait
 return Entity.trait('PlayerInventory', function(self, player)
     
