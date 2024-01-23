@@ -17,10 +17,10 @@ return Fusion:scoped{
     end,
     shortNumber = function(scope, input)
         
-        return scope:Computed(function(use) return shortNumber(input) end)
+        return scope:Computed(function(use) return shortNumber(use(input)) end)
     end,
     shortTime = function(scope, input)
         
-        return scope:Computed(function(use) return shortTime(input) end)
+        return scope:Computed(function(use) return shortTime(use(input)) end)
     end,
 }
