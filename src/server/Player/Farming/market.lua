@@ -5,7 +5,7 @@ local PlayerMarket = require(script.Parent.Parent.Market)
 local PlayerFarming = require(script.Parent)
 
 --// Trait
-return Entity.trait('PlayerPower', function(self, player: Player)
+return Entity.trait('PlayerFarming', function(self, player: Player)
     
     local farming = PlayerFarming.get(player)
     local market = PlayerMarket.get(player)
