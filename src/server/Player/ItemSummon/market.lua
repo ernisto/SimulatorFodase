@@ -18,7 +18,7 @@ return Entity.trait('PlayerItemSummon', function(self, player)
     self.MultiSummonPass = self:_host(market:getPass(689892916))
     
     --// Binders
-    self.SkipSummonPass:bind(function() print('can skip'); playerItemSummon.cooldown = 0 end)
+    self.SkipSummonPass:bind(function() playerItemSummon.cooldown = 2 end)
     
     self.LuckyPass:bind(function() playerItemSummon.luckBoost:add('pass', 1/6) end)
     self.SuperLuckyPass:bind(function() playerItemSummon.luckBoost:add('pass', 2/6) end)
