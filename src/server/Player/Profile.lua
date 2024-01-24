@@ -59,6 +59,8 @@ function PlayerProfile.wrap(player: Player)
         local release = Instance.new("BindableEvent")
         
         profile.KeyInfoUpdated:Connect(function() release:Fire() end)
+        profile:Save()
+        
         release.Event:Wait()
     end
     
