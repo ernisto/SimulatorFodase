@@ -17,7 +17,7 @@ Players.PlayerAdded:Connect(function(player)
     
     --// Profile
     local success, profile = pcall(PlayerProfile.wrap, player)
-    if not success then return player:Kick(`hasnt possible load ur data`) end
+    if not success then player:Kick(`hasnt possible load ur data`); return end
     
     --// Character
     player:LoadCharacter()
@@ -38,11 +38,10 @@ Players.PlayerAdded:Connect(function(player)
     end
     
     --// End
-    while player.Parent do
-        
+    repeat
         character.Destroying:Wait()
+        if not player.Parent then break end
+        
         player:LoadCharacter()
-    end
-    
-    return
+    until false
 end)
