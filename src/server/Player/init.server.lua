@@ -36,6 +36,7 @@ Players.PlayerAdded:Connect(function(player)
         
         if SystemModule.get then task.spawn(SystemModule.get, player) end
     end
+    player:AddTag('LoadedPlayer')
     
     --// End
     repeat
