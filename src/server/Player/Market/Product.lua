@@ -158,6 +158,10 @@ function Product.new(player: Player, productId: number)
         end)
         return promise
     end
+    function self:getPendingPrompt(): Promise<Receipt>?
+        
+        return pendingPromise
+    end
     
     --// Remotes
     local client = Replicator.get(container)
@@ -188,6 +192,19 @@ function MarketplaceService.ProcessReceipt(rawReceipt)
     
     return Enum.ProductPurchaseDecision.PurchaseGranted
 end
+MarketplaceService.PromptProductPurchaseFinished:Connect(function(userId, productId, wasPurchased)
+    
+    if wasPurchased then return end
+    
+    local player = Players:GetPlayerByUserId(userId)
+    if not player then return end
+    
+    local product = products:find(player, productId)
+    if not product then return end
+    
+    local promise = product:getPendingPrompt()
+    if promise then promise:cancel('prompt cancelled') end
+end)
 
 --// Types
 export type receipt = {
