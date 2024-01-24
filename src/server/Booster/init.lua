@@ -33,7 +33,7 @@ function Booster.new(name: string)
     function self:set(layer: string, boost: number, duration: number?)
         
         self:remove(layer)
-        self:add(layer, boost, duration)
+        self:add(layer, boost - 1.00, duration)
     end
     function self:remove(layer: string, boost: number?)
         
