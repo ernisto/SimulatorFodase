@@ -4,7 +4,6 @@ local Entity = require(game.ReplicatedStorage.Packages.Entity)
 local Cache = require(game.ReplicatedStorage.Packages.Cache)
 
 local PlayerFarming = require(game.ServerScriptService.Player.Farming)
-local PlayerPower = require(game.ServerScriptService.Player.Power)
 local PlayerState = require(script.Parent.PlayerState)
 local Mob = require(script.Parent)
 
@@ -30,9 +29,7 @@ return Entity.trait('Mob', function(self, model: Mob.entity)
         assert(state:isAlive(), `mob is died`)
         
         self:_listenState(state)
-        
-        local power = PlayerPower.get(player)
-        local damage = power.basePower
+        local damage = farming:getDamage()
         
         local damageDealed = state:takeDamage(damage)
         local pickups = state:pickupDrops()
