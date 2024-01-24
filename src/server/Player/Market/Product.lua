@@ -102,7 +102,7 @@ function Product.new(player: Player, productId: number)
     end
     function self:awaitSavePurchase(rawReceipt)
         
-        local promise = pendingPromise
+        local promise = pendingPromise or error(`prompt expired`)
         local purchaseReceiptId = purchaseIds[rawReceipt.PurchaseId] or HttpService:GenerateGUID()
         
         local receipt = self.receipts[purchaseReceiptId] or setmetatable({
