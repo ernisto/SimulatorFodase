@@ -82,6 +82,9 @@ function PlayerProfile.wrap(player: Player)
         error(`already quited`)
     end
     
+    --// Cleaner
+    player.Destroying:Connect(function() profile:Release() end)
+    
     --// End
     profiles[player] = profile
     return profile
