@@ -30,6 +30,11 @@ function Booster.new(name: string)
         if not layerLifetimes[layer] then layerLifetimes[layer] = {} end
         table.insert(layerLifetimes[layer], { boost=boost, duration=duration })
     end
+    function self:set(layer: string, boost: number, duration: number?)
+        
+        self:remove(layer)
+        self:add(layer, boost, duration)
+    end
     function self:remove(layer: string, boost: number?)
         
         layers[layer] = if boost then math.max(1.00, self:get(layer) + boost) else nil
