@@ -94,7 +94,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
             Spring.target(petModel, 1.00, 10, { Scale = 0.80 })
             Spring.completed(rootPart, function()
                 
-                if trash.hasCollected then return end
+                if trash.hasCollected then petModel:Destroy(); return end
                 
                 Spring.target(highlight, 1.00, 10, { FillTransparency = 1.00 })
                 Spring.target(petModel, 0.80, 10, { Scale = originalScale })
