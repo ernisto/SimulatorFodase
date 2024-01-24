@@ -8,6 +8,7 @@ local ItemAssets = ReplicatedStorage.Assets.Items
 local CoinAsset = ReplicatedStorage.Assets.Coin
 
 local Replication = require(ReplicatedStorage.Packages.Replication)
+local Spring = require(ReplicatedStorage.Packages.Spring)
 local Entity = require(ReplicatedStorage.Packages.Entity)
 local emitAll = require(ReplicatedStorage.Shared.EmitAll)
 local Cache = require(ReplicatedStorage.Packages.Cache)
@@ -98,8 +99,11 @@ return Entity.trait('Mob', function(self, model: entity)
         animator:getTrack(script.DiedAnimations):Play()
         emitAll(model.PrimaryPart.Died)
         
+        local defer1 = task.delay(self.respawnTime, function() self:_respawn() end)
+        local defer2 = task.delay(.2, function() Spring.target(model.PrimaryPart, 1.00, 1, { CFrame = model.PrimaryPart.CFrame * CFrame.new(0, -20, 0)}) end)
+        
         self.health = 0
-        task.delay(self.respawnTime, function() self:_respawn() end)
+        model.PrimaryPart.AncestryChanged:Connect(function() task.cancel(defer1); task.cancel(defer2) end)
     end
     function self:_respawn()
         
@@ -107,6 +111,7 @@ return Entity.trait('Mob', function(self, model: entity)
         emitAll(model.PrimaryPart.Respawned)
         
         self.health = self.maxHealth
+        Spring.target(model.PrimaryPart, 1.00, 1, { CFrame = model.PrimaryPart.CFrame * CFrame.new(0, 20, 0) })
     end
     
     --// Coin Dropping
