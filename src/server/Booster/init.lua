@@ -37,7 +37,7 @@ function Booster.new(name: string)
     end
     function self:remove(layer: string, boost: number?)
         
-        layers[layer] = if boost then math.max(1.00, self:get(layer) + boost) else nil
+        layers[layer] = if boost then math.max(1.00, self:get(layer) - boost) else nil
         container.Value = self:get()
     end
     function self:get(layer: string?): number
