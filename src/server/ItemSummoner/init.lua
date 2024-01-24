@@ -37,7 +37,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         summonMarket.MultiSummonPass:expect()
         
         local productId = rootPart.Summon3:GetAttribute('productId')
-        if productId then PlayerMarket.get(player):getProduct(productId):expect() end
+        if productId then PlayerMarket.get(player):getProduct(productId):promptAsync():expect():complete() end
         
         local items = {}
         for count = 1, 3 do items[count] = self:summon(player, summoning) end
@@ -50,7 +50,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         summoning:consumeCooldown()
         
         local productId = rootPart.Summon1:GetAttribute('productId')
-        if productId then PlayerMarket.get(player):getProduct(productId):expect() end
+        if productId then PlayerMarket.get(player):getProduct(productId):promptAsync():expect():complete() end
         
         return self:summon(player, summoning)
     end

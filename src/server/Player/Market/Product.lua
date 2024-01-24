@@ -1,10 +1,13 @@
 --// Packages
 local MarketplaceService = game:GetService('MarketplaceService')
+local HttpService = game:GetService('HttpService')
 local Players = game:GetService('Players')
 
 local wrapper = require(game.ReplicatedStorage.Packages.Wrapper)
-local Promise = require(game.ReplicatedStorage.Packages.Promise)
 local Cache = require(game.ReplicatedStorage.Packages.Cache)
+
+local Promise = require(game.ReplicatedStorage.Packages.Promise)
+type Promise<data... = ()> = Promise.TypedPromise<data...>
 
 local Replicator = require(game.ServerStorage.Packages.Replicator)
 local PlayerProfile = require(script.Parent.Parent.Profile)
@@ -14,18 +17,35 @@ local Product = {}
 local products = Cache.new(-1, 'k')
 
 --// Data
-local awaitData = PlayerProfile.subData('products', {})
+local awaitReceipts = PlayerProfile.subData('products', {
+    queuedProcessIds = {},
+    purchaseIds = {},
+    receipts = {} :: {receipt},
+})
 
 --// Factory
 function Product.new(player: Player, productId: number)
     
-    local receipts = awaitData(player)
+    local data = awaitReceipts(player)
+    local profile = PlayerProfile.awaitProfile(player)
+    local queuedProcessIds = data.queuedProcessIds
+    local purchaseIds = data.purchaseIds
+    local pendingPromise, pendingParams
     
     local container = Instance.new("Folder")
     local self = wrapper(container, 'Product')
-    self.queuedPurchaseDatas = {}
-    self.queuedPrompts = {}
-    self.receipts = receipts
+    
+    --// Sub Classes
+    local Receipt = {}
+    Receipt.__index = Receipt
+    
+    function Receipt.complete(receipt) return self:complete(receipt) end
+    function Receipt.processAsync(receipt) return self:processAsync(receipt) end
+    
+    for _,receipt in data.receipts do setmetatable(receipt, Receipt) end
+    
+    --// Properties
+    self.receipts = data.receipts
     self.id = productId
     
     self.purchased = self:_signal('purchased')
@@ -43,33 +63,108 @@ function Product.new(player: Player, productId: number)
     self.name = info.Name
     
     --// Methods
-    function self:bind(process: (receipt: receipt) -> ())
+    function self:bind(process: (params: { [string]: any }, receipt: Receipt) -> ())
         
         self.process = process
-    end
-    function self:give()
         
-        products[productId] = os.time()
-    end
-    function self:promptAsync(purchaseData: { [string]: any })
-        
-        purchaseData = purchaseData or {}
-        purchaseData.fromClient = purchaseData.fromClient or false
-        purchaseData.promptTimestamp = os.time()
-        
-        local promptResult = Promise.new(coroutine.yield)
-        table.insert(self.queuedPrompts, promptResult)
-        table.insert(self.queuedPurchaseDatas, purchaseData)
-        
-        MarketplaceService:PromptProductPurchase(player, productId)
-        return promptResult
+        for _,receiptId in queuedProcessIds do
+            
+            local receipt = self.receipts[receiptId]
+            if not receipt then continue end
+            
+            receipt:processAsync()
+        end
     end
     
-    local client = Replicator.get(container)
-    function client.Prompt(player, data)
+    function self:complete(receipt: Receipt)
         
-        data.fromClient = true
-        return self:promptAsync(data):expect()
+        local index = table.find(queuedProcessIds, receipt.id)
+        if index then table.remove(queuedProcessIds, index) end
+        
+        receipt.processedTimestamp = os.time()
+        return receipt
+    end
+    function self:processAsync(receipt: Receipt): Promise
+        
+        return Promise.try(self.process, receipt.params, receipt)
+            :tap(function() receipt:complete() end)
+    end
+    
+    function self:_awaitSaveReceipt(receipt: Receipt)
+        
+        assert(profile:IsActive(), `profile isnt active (probably player left the game)`)
+        
+        table.insert(queuedProcessIds, receipt.id)
+        self.receipts[receipt.id] = receipt
+        
+        receipt:processAsync()
+        return profile:awaitSave()
+    end
+    function self:awaitSavePurchase(rawReceipt)
+        
+        local promise = pendingPromise
+        local purchaseReceiptId = purchaseIds[rawReceipt.PurchaseId] or HttpService:GenerateGUID()
+        
+        local receipt = self.receipts[purchaseReceiptId] or setmetatable({
+            placeId = rawReceipt.PlaceId or game.PlaceId,
+            jobId = rawReceipt.JobId or game.JobId,
+            currency = rawReceipt.CurrencyType.Name,
+            purchaseId = rawReceipt.PurchaseId,
+            productId = rawReceipt.ProductId,
+            spent = rawReceipt.CurrencySpent,
+            purchasedTimestamp = os.time(),
+            processedTimestamp = nil,
+            params = pendingParams,
+            id = purchaseReceiptId,
+        }, Receipt)
+        purchaseIds[rawReceipt.PurchaseId] = receipt.id
+        
+        local success, error = pcall(function() self:_awaitSaveReceipt(receipt) end)
+        if success then promise:_resolve(receipt) else promise:_reject(error) end
+    end
+    function self:awaitSaveGive(params): Promise
+        
+        local receipt = setmetatable({
+            id = HttpService:GenerateGUID(),
+            purchasedTimestamp = os.time(),
+            processedTimestamp = nil,
+            productId = productId,
+            placeId = game.PlaceId,
+            jobId = game.JobId,
+            currency = 'None',
+            params = params or { promptTimestamp = os.time(), fromClient = false },
+            spent = 0,
+        }, Receipt)
+        return self:_awaitSaveReceipt(receipt)
+    end
+    
+    function self:promptAsync(params: { [string]: any }): Promise<Receipt>
+        
+        assert(not pendingPromise, `a prompt already pending`)
+        
+        params = params or {}
+        params.fromClient = params.fromClient or false
+        params.promptTimestamp = os.time()
+        
+        local promise = Promise.try(MarketplaceService.PromptProductPurchase, MarketplaceService, player, productId)
+            :andThen(coroutine.yield)
+        
+        pendingPromise = promise
+        pendingParams = params
+        promise:finally(function()
+            
+            pendingPromise = nil
+            pendingParams = nil
+        end)
+        return promise
+    end
+    
+    --// Remotes
+    local client = Replicator.get(container)
+    function client.Prompt(player, params)
+        
+        params.fromClient = true
+        return self:promptAsync(params):expect()
     end
     
     --// End
@@ -80,60 +175,35 @@ export type Product = typeof(Product.new(Instance.new("Player"), 0))
 
 --// Functions
 local isProcessing = {}
-local function processReceipt(_receipt, player)
+function MarketplaceService.ProcessReceipt(rawReceipt)
     
-    local profile = PlayerProfile.findProfile(player) or error(`inative profile`)
-    local playerProduct = products:find(player, _receipt.ProductId)
+    if isProcessing[rawReceipt.PurchaseId] then return end
+    isProcessing[rawReceipt.PurchaseId] = true
     
-    assert(isProcessing[_receipt.PurchaseId], `already processing`)
-    isProcessing[_receipt.PurchaseId] = true
+    local player = Players:GetPlayerByUserId(rawReceipt.PlayerId) or error(`player offline`)
+    local playerProduct = products:find(player, rawReceipt.ProductId) or error(`product doesnt exists`)
     
-    local receipt = {
-        purchaseId = _receipt.PurchaseId,
-        productId = _receipt.ProductId,
-        placeId = _receipt.PurchasePlaceId,
-        spent = _receipt.CurrencySpent,
-        currency = _receipt.CurrencyType,
-        timestamp = os.time(),
-        data = table.remove(playerProduct.queuedPurchaseDatas),
-    }
-    playerProduct.process(receipt)
-    table.insert(playerProduct.receipts, 1, receipt)
-    
-    assert(profile:IsActive(), `profile must to be active`)
-    profile:awaitSave()
-end
-function MarketplaceService.ProcessReceipt(receipt)
-    
-    if isProcessing[receipt.PurchaseId] then return end
-    isProcessing[receipt.PurchaseId] = true
-    
-    local player = Players:GetPlayerByUserId(receipt.PlayerId) or error(`player offline`)
-    local playerProducts = products:find(player, receipt.ProductId) or error(`product doesnt exists`)
-    local prompt = table.remove(playerProducts.queuedPrompts)
-    
-    local success, result = xpcall(processReceipt,
-        function(message) isProcessing[receipt.PurchaseId] = nil; return message end,
-        receipt, player
-    )
-    if prompt then
-        
-        if success then prompt:_resolve(result) else prompt:_reject(result) end
-    end
-    assert(success, result)
+    playerProduct:awaitSavePurchase(rawReceipt)
+    isProcessing[rawReceipt.PurchaseId] = nil
     
     return Enum.ProductPurchaseDecision.PurchaseGranted
 end
 
 --// Types
 export type receipt = {
+    params: { promptTimestamp: number, fromClient: boolean } & { [string]: any },
+    purchasedTimestamp: number,
+    processedTimestamp: number,
     purchaseId: number,
     productId: number,
-    timestamp: number,
+    currency: string,
     placeId: number,
     spent: number,
-    currency: string,
-    data: { promptTimestamp: number, fromClient: boolean } & { [string]: any },
+    id: string,
+}
+export type Receipt = receipt & {
+    processAsync: (Receipt) -> Promise,
+    complete: (Receipt) -> (),
 }
 
 --// End
