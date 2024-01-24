@@ -36,6 +36,11 @@ return Entity.trait('PlayerPower', function(self, player: Player, syncs: { baseP
         end
         self.basePower += amount
     end
+    function self:consume(amount: number)
+        
+        assert(self.basePower >= amount, `not enough power`)
+        self.basePower -= amount
+    end
     
     --// Listeners
     farming.clicked:connect(function() self:add(1) end)
