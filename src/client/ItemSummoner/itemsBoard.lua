@@ -85,7 +85,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
             { TextTransparency = 1.00, Position = UDim2.new(0, -40, 0, 0) }
         )
         Spring.target(board.Holder.Pets, 1.00, 5.00,
-            { Position = UDim2.new(0, -50, 0, 40), Size = UDim2.new(0, 250, 0, 180) }
+            { Position = UDim2.new(0, -85, 0, 40), Size = UDim2.new(0, 250, 0, 180) }
         )
         Spring.target(board.Holder.Pets.UIGridLayout, 1.00, 5.00,
             { CellPadding = UDim2.new(0, 60, 0, 10) }
