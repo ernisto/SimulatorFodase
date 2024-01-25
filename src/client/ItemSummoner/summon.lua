@@ -96,9 +96,9 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
             
             Spring.target(rootPart, 1.00, 10, { CFrame = rootPart.CFrame - Vector3.new(0, 52, 0) })
             Spring.target(petModel, 1.00, 10, { Scale = 0.80 })
-            Spring.completed(rootPart, function()
-                
-                if trash.hasCollected then petModel:Destroy(); return end
+            
+            trash:add(function() task.delay(.5, petModel.Destroy, petModel) end)
+            trash:add(task.delay(.15, function()
                 
                 Spring.target(highlight, 1.00, 10, { FillTransparency = 1.00 })
                 Spring.target(petModel, 0.80, 10, { Scale = originalScale })
@@ -110,9 +110,8 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
                 trash:add(function()
                     
                     Spring.target(petModel, 2.00, 5, { Scale = 1, Pivot = rootPart.CFrame - Vector3.new(0, 3, 0) })
-                    Spring.completed(petModel, function() petModel:Destroy() end)
                 end)
-            end)
+            end))
         end
     end
 end)
