@@ -19,11 +19,12 @@ return Entity.trait('PlayerFarming', function(self, player: Player)
     --// Methods
     function self:getDamage()
         
-        return playerPower.basePower * self.damageBoost:get()
+        return math.max(1, playerPower.basePower * self.damageBoost:get())
     end
     function self:click()
         
         self.clicked:_emit()
+        playerPower:add(1) 
     end
     
     local cooldownFinish = 0
