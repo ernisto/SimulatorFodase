@@ -1,5 +1,6 @@
 --// Packages
 local SoundService = game:GetService('SoundService')
+local PlayerAttackSound = SoundService.PlayerAttack
 local PickupItemSound = SoundService.PickupItem
 local DropItemSound = SoundService.DropItem
 
@@ -57,6 +58,7 @@ return Entity.trait('Mob', function(self, model: entity)
         
         local animator = LocalAnimator():expect()
         local attackTrack = animator:getTrack(script.PlayerAttackAnimations)
+        PlayerAttackSound:Play()
         attackTrack:Play()
         
         return server:invokeAttackAsync():andThen(
