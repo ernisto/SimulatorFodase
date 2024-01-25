@@ -7,6 +7,8 @@ local Entity = require(game.ReplicatedStorage.Packages.Entity)
 local emitAll = require(game.ReplicatedStorage.Shared.EmitAll)
 local ItemSummoner = require(script.Parent)
 
+local SummonSound = game.SoundService.Summon
+
 local GainedParticle = game.ReplicatedStorage.Assets.Particles.ItemGained
 export type entity = ItemSummoner.entity
 
@@ -29,12 +31,14 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local trash = Collector{ lifetime=10 }
         
         --// Animation
+        SummonSound:Play()
         summonAnimation:Play()
         Spring.target(model.Star, 1.00, 30, { Color = brightColor })
         
         local emittions = trash:sub()
         for _,particle in model.Star.Particles:GetChildren() do
             
+            if particle:IsA('Sound') then emittions:add(task.delay(particle:GetAttribute('PlayDelay'), function() particle:Play() end)) end
             if not particle:IsA('ParticleEmitter') then continue end
             Spring.target(particle, 1.00, 30, { Rate = particle:GetAttribute('Rate') })
             
