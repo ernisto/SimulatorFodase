@@ -63,14 +63,14 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local promptTriggered = Promise.fromEvent(summon1Prompt.Triggered)
         summon1Prompt.PromptButtonHoldEnded:Connect(function() promptTriggered:cancel() end)
         
-        local item = server:invokeSummon1Async()
+        local items = server:invokeSummon1Async()
             :catch(function(err) Gameplay.error(err.error:gsub("[%w%. ]*:%d+: ", " ")) end)
             :expect()
         
         promptTriggered:await()
         showSkip()
         
-        self.itemSummoned:_emit(item)
+        self.itemSummoned:_emit(items)
         hideSkip()
     end)
     summon3Prompt.PromptButtonHoldBegan:Connect(function()
@@ -78,14 +78,14 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local promptTriggered = Promise.fromEvent(summon3Prompt.Triggered)
         summon3Prompt.PromptButtonHoldEnded:Connect(function() promptTriggered:cancel() end)
         
-        local item1, item2, item3 = server:invokeSummon3Async()
+        local items = server:invokeSummon3Async()
             :catch(function(err) Gameplay.error(err.error:gsub("[%w%. ]*:%d+: ", " ")) end)
             :expect()
         
         promptTriggered:await()
         showSkip()
         
-        self.itemSummoned:_emit(item1, item2, item3)
+        self.itemSummoned:_emit(items)
         hideSkip()
     end)
     skipPrompt.Triggered:Connect(function()

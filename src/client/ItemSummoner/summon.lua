@@ -24,7 +24,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
     local brightColor = model.Star:GetAttribute('LightColor')
     
     local lastTrash
-    itemSummoner.itemSummoned:connect(function(...: Folder)
+    itemSummoner.itemSummoned:connect(function(petNames: {string})
         
         local trash = Collector{ lifetime=10 }
         
@@ -54,7 +54,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         summonAnimation:Stop()
         Spring.stop(model.Star)
         
-        self:_renderItems(trash, {...})
+        self:_renderItems(trash, petNames)
         model.Star.Color = originalColor
         
         for _,particle in model.Star.Particles:GetChildren() do

@@ -20,12 +20,26 @@ export type entity = Model & {
     }
 }
 
+local function getLuckTargets(dropRates)
+    
+    local luckTargets = {}
+    for name, rate in dropRates do
+        
+        table.insert(luckTargets, { name=name, rate=rate })
+    end
+    table.sort(luckTargets, function(a, b) return a.rate < b.rate end)
+    
+    return { luckTargets[1].name, luckTargets[2].name }
+end
+
 --// Trait
 return Entity.trait('ItemSummoner', function(self, model: entity)
     
+    local dropRates = model.DropRates:GetAttributes()
+    local luckTargets = getLuckTargets(dropRates)
+    
     local client = Replicator.get(model)
     local rootPart = model.PrimaryPart
-    local randomItemName = RandomOption.new(model.DropRates:GetAttributes())
     
     --// Remotes
     function client.Summon3(player)
@@ -39,10 +53,7 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local productId = rootPart.Summon3:GetAttribute('productId')
         if productId then PlayerMarket.get(player):getProduct(productId):promptAsync():expect():complete() end
         
-        local items = {}
-        for count = 1, 3 do items[count] = self:summon(player, summoning) end
-        
-        return unpack(items)
+        return self:summon(player, summoning, 3+summoning.bonus)
     end
     function client.Summon1(player)
         
@@ -52,17 +63,31 @@ return Entity.trait('ItemSummoner', function(self, model: entity)
         local productId = rootPart.Summon1:GetAttribute('productId')
         if productId then PlayerMarket.get(player):getProduct(productId):promptAsync():expect():complete() end
         
-        return self:summon(player, summoning)
+        return self:summon(player, summoning, 1+summoning.bonus)
     end
     
     --// Methods
-    function self:summon(player, playerSummoning)
+    function self:summon(player, playerSummoning, count: number)
         
+        local buffedRates = table.clone(dropRates)
+        for _,name in luckTargets do buffedRates[name] *= playerSummoning.luckBoost:get() end
+        for name, rate in buffedRates do buffedRates[name] = rate*100 end   -- avoid fractional rates
+        
+        local randomItemName = RandomOption.new(buffedRates)
         local inventory = PlayerInventory.get(player)
-        local itemName = randomItemName:choice()
-        local item = Item.new{ name=itemName }
+        local itemNames = {}
         
-        inventory:addItem(item)
-        return itemName
+        for index = 1, count do
+            
+            local itemName = randomItemName:choice()
+            local item = Item.new{ name=itemName }
+            
+            inventory:addItem(item)
+            itemNames[index] = itemName
+            
+            playerSummoning.itemSummoned:_emit(item)
+        end
+        
+        return itemNames
     end
 end)
