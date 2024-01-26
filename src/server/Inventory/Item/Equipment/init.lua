@@ -31,7 +31,7 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
     --// Callbacks
     item:addStackClause(function(target)
         
-        local targetEquipment = Equipment.find(target)
+        local targetEquipment = Equipment.find(target.roblox)
         if not targetEquipment then return false end
         
         return not self.isEquipped and not targetEquipment.isEquipped
