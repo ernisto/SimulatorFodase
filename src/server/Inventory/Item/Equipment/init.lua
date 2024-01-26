@@ -1,13 +1,22 @@
 --// Packages
+local parseAttributes = require(game.ReplicatedStorage.Config.ParseAttributes)
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 local Item = require(script.Parent)
 
 --// Types
 export type entity = Item.entity
 
+--// Config
+local baseConfig = {
+    slot = 'undefined'
+}
+
 --// Trait
-local Equipped
-local Equipment = Entity.trait('Equipment', function(self, model: entity)
+local Equipped, Equipment
+Equipment = Entity.trait('Equipment', function(self, model: entity)
+    
+    local config = parseAttributes(model, baseConfig)
+    self:_syncAttributes(config)
     
     local equippedItem
     
