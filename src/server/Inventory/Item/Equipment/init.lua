@@ -38,7 +38,7 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
         self.isEquipped = false
         self._handler = nil
     end
-    function self:equip(handler: Humanoid)
+    function self:equip(handler: Humanoid): Equipped
         
         if equippedItem then return equippedItem end
         
@@ -54,6 +54,7 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
         return equippedItem
     end
 end)
+export type Equipment = typeof(Equipment.get())
 
 --// States
 Equipped = Entity.trait('Equipped', function(self, model: entity)
@@ -61,6 +62,7 @@ Equipped = Entity.trait('Equipped', function(self, model: entity)
     local equipment = Equipment.find(model) or error(`entity cannot be equipped`)
     self.handler = equipment._handler :: Humanoid
 end)
+export type Equipped = typeof(Equipped.get())
 
 --// End
 return { Equipment = Equipment, Equipped = Equipped }
