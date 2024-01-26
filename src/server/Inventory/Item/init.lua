@@ -54,15 +54,14 @@ function Item.new(data: data)
     self.data = data
     
     --// Methods
-    local clauses = {
-        [function(hoster) return self.name == hoster.name end] = true
-    }
+    local clauses = {}
     function self:addStackClause(clause: (hoster: Item) -> boolean)
         
         clauses[clause] = true
     end
     function self:canStack(hoster: Item)
         
+        if self.name ~= hoster.name then return false end
         for clause in clauses do if not clause(hoster) then return false end end
         return true
     end
