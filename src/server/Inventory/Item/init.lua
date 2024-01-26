@@ -80,6 +80,16 @@ function Item.new(data: data)
         self.roblox.Parent = nil
         self:destroy()
     end
+    function self:fork(amount: number)
+        
+        assert(self.amount > amount, `amount so high (must to rest something after fork)`)
+        self:consume(amount)
+        
+        local item = Item.new(table.clone(data))
+        item.amount = amount
+        
+        return item
+    end
     
     --// End
     cache:set(self, self.roblox)
