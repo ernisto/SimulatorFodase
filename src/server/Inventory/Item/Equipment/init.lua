@@ -21,11 +21,16 @@ local Equipment = Entity.trait('Equipment', function(self, model: entity)
     --// Methods
     function self:getEquipped() return equippedItem end
     
-    function self:unequip() if equippedItem then equippedItem:unwrap() end end
+    function self:unequip()
+        
+        if equippedItem then equippedItem:unwrap() end
+        self.isEquipped = false
+    end
     function self:equip(handler: Humanoid)
         
         if self._handler then return end
         self._handler = handler
+        self.isEquipped = true
         
         equippedItem = Equipped.get(model)
         self.equipped:_emit(equippedItem)
