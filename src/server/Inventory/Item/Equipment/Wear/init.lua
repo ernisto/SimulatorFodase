@@ -26,7 +26,7 @@ local Wear = Entity.trait('Wear', function(self, model: Equipment.entity, syncs:
     
     --// Listeners
     equipment.unequipped:connect(function() Weared.get(model):destroy() end)
-    equipment.equipped:connect(function() Weared.get(model) end)
+    equipment.equipped:connect(function(equipped) Weared.get(equipped.roblox.Parent) end)
 end)
 
 --// States

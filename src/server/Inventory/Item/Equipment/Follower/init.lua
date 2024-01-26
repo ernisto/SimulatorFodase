@@ -27,7 +27,7 @@ local Follower = Entity.trait('Follower', function(self, model: Equipment.entity
     
     --// Listeners
     equipment.unequipped:connect(function() Following.get(model):destroy() end)
-    equipment.equipped:connect(function() Following.get(model) end)
+    equipment.equipped:connect(function(equipped) Following.get(equipped.roblox.Parent) end)
 end)
 
 --// States

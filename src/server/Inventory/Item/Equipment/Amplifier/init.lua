@@ -27,7 +27,7 @@ local Amplifier = Entity.trait('Amplifier', function(self, model: Equipment.enti
     
     --// Listeners
     equipment.unequipped:connect(function() Amplifing.get(model):destroy() end)
-    equipment.equipped:connect(function() Amplifing.get(model) end)
+    equipment.equipped:connect(function(equipped) Amplifing.get(equipped.roblox.Parent) end)
 end)
 
 --// States
