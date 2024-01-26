@@ -28,9 +28,9 @@ return Entity.trait('Inventory', function(self, entity: Instance)
             if stacking <= 0 then continue end
             
             storedItem.amount += stacking
-            item.amount -= stacking
+            item:consume(stacking)
             
-            if item.amount <= 0 then item:destroy(); return end
+            if item.amount <= 0 then break end
         end
         
         item.roblox.Parent = self.roblox
