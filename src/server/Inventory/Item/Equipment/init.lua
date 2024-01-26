@@ -25,6 +25,7 @@ local Equipment = Entity.trait('Equipment', function(self, model: entity)
         
         if equippedItem then equippedItem:unwrap() end
         self.isEquipped = false
+        self._handler = nil
     end
     function self:equip(handler: Humanoid)
         
