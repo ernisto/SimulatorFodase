@@ -48,6 +48,11 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
         self.isEquipped = false
         self._handler = nil
     end
+    
+    function self:forkEquipped(handler: Humanoid)
+        
+        return if item.amount > 1 then self:newEquipped(handler) else self:equip(handler)
+    end
     function self:equip(handler: Humanoid): Equipped
         
         if equippedItem then return equippedItem end
@@ -62,6 +67,15 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
         handler.Destroying:Connect(function() self:unequip() end)
         
         return equippedItem
+    end
+    function self:newEquipped(handler: Humanoid)
+        
+        local newItem = item:fork(1)
+        local newEquipment = Equipment.get(newItem.roblox)
+        local newEquippedItem = newEquipment:equip(handler)
+        
+        self.equipped:_emit(newEquippedItem)
+        return newEquippedItem
     end
 end)
 export type Equipment = typeof(Equipment.get())

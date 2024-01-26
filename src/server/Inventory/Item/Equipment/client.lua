@@ -12,6 +12,6 @@ return Entity.trait('Equipment', function(self, entity: Equipment.entity)
     function client.Equip(player)
         
         if equipment.isEquipped then equipment:unequip()
-        else equipment:equip(player.Character.Humanoid) end
+        else equipment:forkEquipped(player.Character.Humanoid) end
     end
 end)

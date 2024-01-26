@@ -1,12 +1,27 @@
 --// Packages
 local Entity = require(game.ReplicatedStorage.Packages.Entity)
 
+local Equipment = require(script.Item.Equipment)
+type Equipment = Equipment.Equipment
+
 local Item = require(script.Item)
 type Item = Item.Item
 
 --// Trait
 return Entity.trait('Inventory', function(self, entity: Instance)
     
+    self.slotLimits = {
+        Morph = 1,
+        Relic = 1,
+        Head = 1,
+        Pet = 4,
+    }
+    self.equippeds = {
+        Morph = {},
+        Relic = {},
+        Head = {},
+        Pet = {},
+    }
     self.items = {}
     
     --// Signals
@@ -14,6 +29,22 @@ return Entity.trait('Inventory', function(self, entity: Instance)
     self.itemAdded = self:_signal('itemAdded')
     
     --// Methods
+    function self:_itemEquipped(equipped)
+        
+        local equipment = Equipment.Equipment.get(equipped.roblox.Parent)
+        local slot = equipment.slot
+        
+        local slotEquippeds = self.equippeds[slot] or error(`invalid slot '{slot}' of item {equipment}`)
+        if #slotEquippeds >= self.slotLimits[slot] then slotEquippeds[1]:unequip() end
+        
+        table.insert(slotEquippeds, equipment)
+        equipment.unequipped:once(function()
+            
+            local index = table.find(slotEquippeds, equipment)
+            if index then table.remove(slotEquippeds, index) end
+        end)
+    end
+    
     function self:removeItem(item: Item)
         
         item.roblox.Parent = nil
@@ -33,6 +64,18 @@ return Entity.trait('Inventory', function(self, entity: Instance)
             if item.amount <= 0 then return end
         end
         item.roblox.Parent = self.roblox
+        
+        local equipment = Equipment.Equipment.find(item.roblox)
+        if not equipment then return end
+        
+        local equippedListener = equipment.equipped:connect(function(equipped)
+            
+            local equippedItem = Item.find(equipped.roblox.Parent) or error(`isnt a item`)
+            if equippedItem ~= item then self:addItem(equippedItem) end
+            
+            self:_itemEquipped(equipped)
+        end)
+        item.roblox.AncestryChanged:Connect(function() equippedListener:disconnect() end)
     end
     
     --// Listeners
