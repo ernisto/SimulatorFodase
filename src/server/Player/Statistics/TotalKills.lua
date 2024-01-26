@@ -31,6 +31,12 @@ function TotalKills.wrap(player: Player)
     self.roblox.Name = 'TotalKills'
     self.roblox.Parent = player
     
+    --// Setup
+    for level, goal in self.goals do
+        
+        if self.value >= goal.goal and self.pickedRewards[level] then goal.claim() end
+    end
+    
     --// Detector
     playerFarming.mobKilled:connect(function() self:increase(1) end)
     

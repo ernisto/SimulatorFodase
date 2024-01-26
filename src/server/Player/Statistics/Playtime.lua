@@ -32,6 +32,12 @@ function Playtime.wrap(player: Player)
     self.roblox.Name = 'Playtime'
     self.roblox.Parent = player
     
+    --// Setup
+    for level, goal in self.goals do
+        
+        if self.value >= goal.goal and self.pickedRewards[level] then goal.claim() end
+    end
+    
     --// Detector
     task.spawn(function() while player.Parent == game.Players do
         

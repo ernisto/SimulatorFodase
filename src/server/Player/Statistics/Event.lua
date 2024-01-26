@@ -27,6 +27,7 @@ function Event.new(data: data, goals: {goal})
     
     self.availableClaim = nil :: number?
     self.nextGoal = if goals[1] then goals[1].goal else 1/0
+    self.goals = goals
     self.level = 1
     
     --// Methods
