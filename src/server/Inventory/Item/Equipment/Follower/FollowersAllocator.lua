@@ -28,7 +28,11 @@ return Entity.trait('FollowersAllocator', function(self, target)
         
         local allocated = AllocatedFollower.get(followerEntity)
         
-        allocated:cleaner(function() self:reallocateAll() end)
+        allocated:cleaner(function()
+            
+            allocateds[followerEntity] = nil
+            self:reallocateAll()
+        end)
         self:reallocateAll()
         
         allocateds[followerEntity] = allocated
