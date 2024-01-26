@@ -33,12 +33,15 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
     function self:unequip()
         
         if equippedItem then equippedItem:unwrap() end
+        equippedItem = nil
+        
         self.isEquipped = false
         self._handler = nil
     end
     function self:equip(handler: Humanoid)
         
-        if self._handler then return end
+        if equippedItem then return equippedItem end
+        
         self._handler = handler
         self.isEquipped = true
         
