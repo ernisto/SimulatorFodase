@@ -61,7 +61,7 @@ function Item.new(data: data)
         
         clauses[clause] = true
     end
-    function self:canStack(hoster)
+    function self:canStack(hoster: Item)
         
         for clause in clauses do if not clause(hoster) then return false end end
         return true
@@ -93,7 +93,12 @@ end
 export type Item = wrapper.wrapper<entity>
     & config & { config: config }
     & data & { data: data }
-    & { visualize: (any) -> Model }
+    & {
+        addStackClause: (any, clause: (hoster: Item) -> boolean) -> (),
+        consume: (any, amount: number) -> (),
+        canStack: (any, hoster: Item) -> (),
+        visualize: (any) -> Model,
+    }
 
 --// End
 return Item
