@@ -18,6 +18,7 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
     local config = parseAttributes(model, baseConfig)
     self:_syncAttributes(config)
     
+    local item = Item.find(model) or error(`this isnt a Item`)
     local equippedItem
     
     self.isEquipped = false
@@ -26,6 +27,15 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
     --// Signals
     self.unequipped = self:_signal('unequipped')
     self.equipped = self:_signal('equipped')
+    
+    --// Callbacks
+    item:addStackClause(function(target)
+        
+        local targetEquipment = Equipment.find(target)
+        if not targetEquipment then return false end
+        
+        return not self.isEquipped and not targetEquipment.isEquipped
+    end)
     
     --// Methods
     function self:getEquipped() return equippedItem end
