@@ -12,6 +12,7 @@ end)
 return Entity.trait('FollowersAllocator', function(self, target)
     
     local allocateds = {}
+    self.total = 0
     
     --// Methods
     function self:reallocateAll()
@@ -23,6 +24,7 @@ return Entity.trait('FollowersAllocator', function(self, target)
             index += 1
             allocated.index = index
         end
+        self.total = index
     end
     function self:allocate(followerEntity: Instance)
         
