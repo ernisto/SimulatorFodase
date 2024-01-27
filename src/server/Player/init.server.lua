@@ -40,10 +40,14 @@ Players.PlayerAdded:Connect(function(player)
     
     --// End
     repeat
+        character.Humanoid.Died:Once(function() character:Destroy() end)
         character.Destroying:Wait()
+        
         if not player.Parent then break end
+        task.wait(1)
         
         player:LoadCharacter()
+        character = player.Character
         
         repeat task.wait() until character:FindFirstChildOfClass("Humanoid")
         character:AddTag('PlayerCharacter')
