@@ -7,6 +7,7 @@ local Item = require(game.ServerScriptService.Inventory.Item)
 
 --// Data
 local awaitData = PlayerProfile.subData('Inventory', {
+    equippedAmounts = {} :: { [string]: number },
     itemDatas = {} :: {Item.data},
     slots = 30,
 })
