@@ -42,6 +42,9 @@ return Entity.trait('Inventory', function(self, entity: Instance)
             
             local index = table.find(slotEquippeds, equipment)
             if index then table.remove(slotEquippeds, index) end
+            
+            local item = Item.find(equipped.roblox.Parent)
+            task.defer(function() self:addItem(item) end)
         end)
     end
     
