@@ -25,8 +25,8 @@ Players.PlayerAdded:Connect(function(player)
     
     local humanoid
         repeat humanoid = character:FindFirstChildOfClass("Humanoid")
-        until humanoid
-        or not task.wait()
+        until humanoid or not task.wait()
+    character:AddTag('PlayerCharacter')
     
     --// Features
     warn("initializing player mechanics")
@@ -44,5 +44,8 @@ Players.PlayerAdded:Connect(function(player)
         if not player.Parent then break end
         
         player:LoadCharacter()
+        
+        repeat task.wait() until character:FindFirstChildOfClass("Humanoid")
+        character:AddTag('PlayerCharacter')
     until false
 end)
