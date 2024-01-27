@@ -33,6 +33,19 @@ function PlayerInventory.wrap(player: Player)
     
     local data = awaitData(player)
     self:_syncAttributes(data)
+    self.data = data
+    
+    --// Listeners
+    self.itemRemoved:connect(function(item)
+        
+        local index = table.find(data.itemDatas, item.data)
+        if index then table.remove(data.itemDatas, index) end
+    end)
+    self.itemAdded:connect(function(item)
+        
+        local index = table.find(data.itemDatas, item.data)
+        if not index then table.insert(data.itemDatas, item.data) end
+    end)
     
     --// Load
     for _,itemData in data.itemDatas do
@@ -42,22 +55,6 @@ function PlayerInventory.wrap(player: Player)
         local item = Item.new(itemData)
         self:addItem(item)
     end
-    
-    --// Listeners
-    self.itemRemoved:connect(function(item)
-        
-        local index = table.find(data.itemDatas, item.data)
-        if not index then return end
-        
-        table.remove(data.itemDatas, index)
-    end)
-    self.itemAdded:connect(function(item)
-        
-        local index = table.find(data.itemDatas, item.data)
-        if index then return end
-        
-        table.insert(data.itemDatas, item.data)
-    end)
     
     --// End
     resolve(self)
