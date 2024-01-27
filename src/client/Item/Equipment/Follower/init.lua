@@ -61,4 +61,5 @@ return Entity.trait('Following', function(self, container: Instance)
     --// Listeners
     container.AncestryChanged:Connect(function() if not container:IsDescendantOf(owner) then self:unwrap() end end)
     self:_host(physicJob)
+    self:_host(model)
 end)
