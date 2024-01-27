@@ -64,8 +64,9 @@ Equipment = Entity.trait('Equipment', function(self, model: entity)
         self.equipped:_emit(equippedItem)
         
         equippedItem:cleaner(function() self.unequipped:_emit(equippedItem) end)
-        handler.Destroying:Connect(function() self:unequip() end)
+        local unequipper = handler.Destroying:Connect(function() self:unequip() end)
         
+        self:_host(unequipper)
         return equippedItem
     end
     function self:newEquipped(handler: Humanoid)
