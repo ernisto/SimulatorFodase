@@ -35,14 +35,14 @@ Following = Entity.trait('Following', function(self, model: Equipment.entity)
     
     local equipped = Equipment.Equipped.get(model) or error(`entity didnt equipped`)
     local _follower = Follower.get(model) or error(`entity cant follow`)
-    local allocator = FollowersAllocator.get(equipped.handler.RootPart)
+    local allocator = FollowersAllocator.get(equipped.handler)
     local item = Item.find(model)
     
     --// Job
     local visual = item:visualize()
     visual.Parent = equipped.handler.Parent
     
-    local allocated = allocator:allocate(visual)
+    local allocated = allocator:allocate(model)
     self:cleaner(function() allocated:deallocate() end)
 end)
 

@@ -35,9 +35,9 @@ return Entity.trait('FollowersAllocator', function(self, target)
             allocateds[followerEntity] = nil
             self:reallocateAll()
         end)
+        allocateds[followerEntity] = allocated
         self:reallocateAll()
         
-        allocateds[followerEntity] = allocated
         return allocated
     end
 end)
