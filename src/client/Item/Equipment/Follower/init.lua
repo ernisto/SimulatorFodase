@@ -15,12 +15,12 @@ return Entity.trait('Following', function(self, container: Instance)
     
     local asset = game.ReplicatedStorage.Assets.Items[container.Name]
     local owner = container:FindFirstAncestorOfClass('Player')
-    local equipped = Equipped.find(container)
-    local follower = Follower.find(container)
+    local equipped = Equipped.await(container)
+    local follower = Follower.await(container)
     
     local humanoid = equipped.handler :: Humanoid
-    local allocation = AllocatedFollower.find(container)
-    local allocator = FollowersAllocator.find(humanoid)
+    local allocation = AllocatedFollower.await(container)
+    local allocator = FollowersAllocator.await(humanoid)
     
     --// Instance
     local model = asset.Model:Clone()
@@ -51,7 +51,7 @@ return Entity.trait('Following', function(self, container: Instance)
             collisionGroup = 'Pets'
         }
         local position = if hit
-            then hit.cframe.Position + Vector3.new(0, follower.height + math.sin(os.clock()), 0)
+            then hit.cframe.Position + Vector3.new(0, follower.roblox:GetAttribute('height') or error(`invalid height of {follower}`) + math.sin(os.clock()), 0)
             else petPosition
         
         alignOrientation.CFrame = CFrame.new(Vector3.zero, playerRootPart.CFrame.LookVector)
